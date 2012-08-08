@@ -62,7 +62,7 @@
     function GetMessagebyId() {
         var ID = $('#IdGet').val();
         Type = "GET";
-        Url = "http://localhost:50415/DemoService.svc/GetMessagebyId?Id=" + ID + "&key=123_";
+        Url = "http://localhost:50415/DemoService.svc/GetMessagebyId?Id=" + ID + "&key=123";
         ContentType = "application/json; charset=utf-8";
         DataType = "json";
         ProcessData = true;
@@ -72,7 +72,7 @@
 
     function CreateMessage() {
         Type = "POST";
-        Url = "http://localhost:50415/DemoService.svc/PostMessage/123_";
+        Url = "http://localhost:50415/DemoService.svc/PostMessage/123";
         var msg2 = { message: { Id: $('#Id').val(), Name: $('#name').val()} };
         Data = JSON.stringify(msg2);
         ContentType = "application/json; charset=utf-8";
