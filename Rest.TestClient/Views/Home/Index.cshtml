@@ -1,0 +1,135 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<h2>@ViewBag.Message</h2>
+<p>
+    To learn more about ASP.NET MVC visit <a href="http://asp.net/mvc" title="ASP.NET MVC Website">
+        http://asp.net/mvc</a>.
+</p>
+<script type="text/javascript">
+    var Type;
+    var Url;
+    var Data;
+    var ContentType;
+    var DataType;
+    var ProcessData;
+    var method;
+    //Generic function to call ASMX/WCF  Service
+    function CallService() {
+        $.ajax({
+            type: Type, //GET,POST,PUT or DELETE verb
+            url: Url, // Location of the service
+            data: Data, //Data to be sent to server
+            contentType: ContentType, // content type sent to server
+            dataType: DataType, //Expected data format from server
+            processdata: ProcessData, //True or False
+            success: function (msg) {  //On Successful service call
+                ServiceSucceeded(msg);
+            },
+            error: ServiceFailed // function When Service call fails
+        });
+    }
+
+    function ServiceFailed(result) {
+        alert('Service call failed: ' + result.status + '' + result.statusText);
+        Type = null; Url = null; Data = null; ContentType = null; DataType = null; ProcessData = null;
+    }
+
+    function ServiceSucceeded(result) {
+        if (DataType == "json") {
+            if (method == "CreateMessage") {
+                document.getElementById("display").innerHTML = "CREATED: " + result.EntityData.Id;
+            }
+            else if (method == "GetMessagebyId") {
+                var string = " ID:" + result.EntityData.Id + "<br/>" + "<br/>" + "NAME: " + result.EntityData.Name;
+                document.getElementById("display").innerHTML = string;
+            }
+        }
+    }
+
+    function ServiceFailed(xhr) {
+        alert("FAIL" + xhr.responseText);
+        if (xhr.responseText) {
+            var err = xhr.responseText;
+            if (err)
+                error(err);
+            else
+                error({ Message: "Unknown server error." })
+        }
+        return;
+    }
+
+    function GetMessagebyId() {
+        var ID = $('#IdGet').val();
+        Type = "GET";
+        Url = "http://localhost:50415/DemoService.svc/GetMessagebyId?Id=" + ID + "&key=123_";
+        ContentType = "application/json; charset=utf-8";
+        DataType = "json";
+        ProcessData = true;
+        method = "GetMessagebyId";
+        CallService();
+    }
+
+    function CreateMessage() {
+        Type = "POST";
+        Url = "http://localhost:50415/DemoService.svc/PostMessage/123_";
+        var msg2 = { message: { Id: $('#Id').val(), Name: $('#name').val()} };
+        Data = JSON.stringify(msg2);
+        ContentType = "application/json; charset=utf-8";
+        DataType = "json";
+        ProcessData = true;
+        method = "PostMessage";
+        CallService();
+    }
+
+    $(document).ready(function () {
+        $('#btnPost').click(function () {
+            CreateMessage();
+            return false;
+        });
+        $('#btnGet').click(function () {
+            GetMessagebyId();
+            return false;
+        });
+    });          
+
+   
+         
+</script>
+<table style="width: 100%;">
+    <tr>
+        <td>
+            Post Message:
+        </td>
+        <td>
+            Id<input id="Id" name="Id" type="text"  />
+        </td>
+        <td>
+            Name<input id="name" name="name" type="text"  />
+        </td>
+        <td>
+            <input id="btnPost" name="btnPost" type="button" value="Post" />
+        </td>
+   
+   
+       
+     </tr>
+     <tr>
+     <td>
+    <br /><div id="display">
+</div>
+     </td>
+     </tr>
+     <tr>
+     <td>
+            GetMessage:
+        </td>
+        <td>
+            Id<input id="IdGet" name="IdGet" type="text"  />
+        </td>
+        <td>
+            <input id="btnGet" name="btnGet" type="button" value="Get" /><br />
+        </td>
+     </tr>
+</table>
+
